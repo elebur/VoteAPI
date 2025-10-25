@@ -51,3 +51,8 @@ class MenuSerializer(serializers.ModelSerializer):
                                       title=item["title"],
                                       description=item["description"])
         return menu
+
+
+class DoVoteSerializer(serializers.Serializer):
+    like = serializers.BooleanField()
+    employee_id = serializers.IntegerField()
