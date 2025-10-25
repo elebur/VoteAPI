@@ -1,18 +1,43 @@
 from django.db import models
 
 
+class BaseReprAndStr:
+    @property
+    def __name(self):
+        """
+        Some classes have 'name' attribute while other have 'title'.
+        This property checks for both and returns the existing one.
+        """
+        return getattr(self, "title", None) or getattr(self, "name")
+
+    def __repr__(self):
+        """
+        Build string like '<ClassName: ObjName (pk=1)'
+        """
+        return f"<{type(self).__name__}: {self.__name} (pk={self.id})>"  # type: ignore
+
+    def __str__(self):
+        return self.__name
+
+
 class Employee(models.Model):
     first_name = models.CharField()
     last_name = models.CharField()
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
-class Restaurant(models.Model):
+    def __repr__(self):
+        return f"<Employee: first_name='{self.first_name}', last_name='{self.last_name}, pk={self.pk}>"
+
+
+class Restaurant(BaseReprAndStr, models.Model):
     name = models.CharField()
     date_joined = models.DateTimeField(auto_now_add=True)
 
 
-class Menu(models.Model):
+class Menu(BaseReprAndStr, models.Model):
     restaurant = models.ForeignKey(Restaurant,
                                    on_delete=models.CASCADE,
                                    related_name="menus")
@@ -23,7 +48,7 @@ class Menu(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
 
-class MenuItem(models.Model):
+class MenuItem(BaseReprAndStr, models.Model):
     menu = models.ManyToManyField(Menu, related_name="items")
 
     restaurant = models.ForeignKey(Restaurant,
@@ -42,3 +67,10 @@ class Vote(models.Model):
                                  on_delete=models.CASCADE)
     like = models.BooleanField()
     voted_at = models.DateTimeField(auto_now_add=True)
+
+    def __repr__(self):
+        return f"<Vote: Employee={self.employee.id}, like={self.like}, Menu={self.menu.id}>"  # type: ignore
+
+    def __str__(self):
+        action = "likes" if self.like else "dislikes"
+        return f"{self.employee} {action} '{self.menu}'"
