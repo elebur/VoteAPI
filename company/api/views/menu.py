@@ -1,9 +1,9 @@
-import json
 import datetime
 
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -20,6 +20,7 @@ def get_menu_by_id(request: Request, pk: int):
     return Response(serializer.data)
 
 
+@csrf_exempt
 def process_menu(request: Request):
     if request.method == "POST":
         return create_menu(request)
@@ -44,7 +45,6 @@ def get_menus_by_date(request: Request, year: int, month: int, day: int):
     menus = Menu.objects.filter(launch_date=date)
     serializer = MenuSerializer(menus, many=True)
     return Response(serializer.data)
-
 
 @api_view(["POST"])
 def create_menu(request: Request):
