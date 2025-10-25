@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -7,6 +8,25 @@ from rest_framework import status
 
 from base.models import Employee, Menu, Vote
 from api.serializers import DoVoteSerializer
+
+
+@api_view(["GET"])
+def get_vote_results(request: Request):
+    today = timezone.now().date()
+    today_menu = Menu.objects.filter(launch_date=today)
+    result = list()
+    for menu in today_menu:
+        likes = menu.votes.filter(like=True).count()
+        dislikes = menu.votes.filter(like=False).count()
+        diff = likes - dislikes
+
+        result.append({
+            "menu_id": menu.id,
+            "likes": likes,
+            "dislikes": dislikes,
+            "result": diff
+        })
+    return Response(result)
 
 
 @csrf_exempt
