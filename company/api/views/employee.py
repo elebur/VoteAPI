@@ -22,7 +22,7 @@ def add_employee(request: Request):
     if serializer.is_valid():
         serializer.save()
         status_code = status.HTTP_201_CREATED
-        result = {"employee_id": serializer.data["id"]}
+        result = {"employee_id": serializer.data["id"]} # type: ignore
     else:
         status_code = status.HTTP_400_BAD_REQUEST
         result = {"details": serializer.errors}

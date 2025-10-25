@@ -22,7 +22,7 @@ def create_restaurant(request: Request):
     if serializer.is_valid():
         serializer.save()
         status_code = status.HTTP_201_CREATED
-        result = {"restaurant_id": serializer.data["id"]}
+        result = {"restaurant_id": serializer.data["id"]} # type: ignore
     else:
         status_code = status.HTTP_400_BAD_REQUEST
         result = {"details": serializer.errors}
