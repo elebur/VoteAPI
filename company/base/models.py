@@ -8,7 +8,12 @@ class BaseReprAndStr:
         Some classes have 'name' attribute while other have 'title'.
         This property checks for both and returns the existing one.
         """
-        return getattr(self, "title", None) or getattr(self, "name")
+        if hasattr(self, "title"):
+            name_attr = "title"
+        else:
+            name_attr = "name"
+
+        return getattr(self, name_attr)
 
     def __repr__(self):
         """
