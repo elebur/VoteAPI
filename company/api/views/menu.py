@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,9 +11,22 @@ from api.serializers import MenuSerializer
 
 
 @api_view(["GET"])
-def get_menu(request: Request, pk: int):
+def get_menu_by_id(request: Request, pk: int):
     m = get_object_or_404(Menu, pk=pk)
     serializer = MenuSerializer(m, many=False)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def get_menus_by_date(request: Request, year: int, month: int, day: int):
+    try:
+        date = datetime.date(year=year, month=month, day=day)
+    except ValueError:
+        err_msg = (f"Invalid date - '{year}-{month}-{day}'. "
+                   "Correct format is YYYY-MM-DD")
+        return Response({"details": err_msg}, status=status.HTTP_400_BAD_REQUEST)
+    menus = Menu.objects.filter(launch_date=date)
+    serializer = MenuSerializer(menus, many=True)
     return Response(serializer.data)
 
 
