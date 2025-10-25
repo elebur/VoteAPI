@@ -43,8 +43,10 @@ class Menu(BaseReprAndStr, models.Model):
                                    related_name="menus")
     title = models.CharField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
+    # Date when the menu must be shown.
+    launch_data = models.DateField()
 
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
 
