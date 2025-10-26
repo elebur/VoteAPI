@@ -1,13 +1,29 @@
+from dataclasses import field
 from django.db import transaction
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from base import models
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(write_only=True)
+
     class Meta:
         model = models.Employee
-        fields = "__all__"
+        fields = ("id", "username", "password",
+                  "email", "first_name",
+                  "last_name", "user", "date_joined")
+
+    def create(self, validated_data: dict):
+        user = User.objects.create_user(username=validated_data["username"],
+                                        password=validated_data["password"],
+                                        email=validated_data["email"])
+        return models.Employee.objects.create(user=user,
+                                              first_name=validated_data["first_name"],
+                                              last_name=validated_data["last_name"])
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -19,7 +35,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MenuItem
-        # fields = "__all__"
         exclude = ("menu", "restaurant")
 
 
