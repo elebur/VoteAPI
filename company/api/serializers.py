@@ -1,4 +1,3 @@
-from dataclasses import field
 from django.db import transaction
 from django.contrib.auth.models import User
 from rest_framework import serializers
