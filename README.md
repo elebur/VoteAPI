@@ -14,6 +14,12 @@
 ## Using the service
 The service will be available under this address http://127.0.0.1:8000/
 
+# Start the server with the test environment
+* `export DJANGO_SETTINGS_MODULE=company.settings_tests`
+* `python company/manage.py migrate`
+* `python company/manage.py runserver`
+
+
 # Endpoints
 ## Authentication
 
