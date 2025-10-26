@@ -42,6 +42,18 @@ def test_creation_by_not_admin(client, user):
     assert resp.status_code == 403
 
 
+def test_creation_without_username():
+    assert 1 == 2
+
+
+def test_creation_without_password():
+    assert 1 == 2
+
+
+def test_creation_by_anonymous_user():
+    assert 1 == 2
+
+
 @pytest.mark.freeze_time("2025-10-26T14:00:00")
 def test_retrieving_employee_by_admin(admin, employee, client):
     jwt = get_jwt_for_user(admin)
@@ -55,3 +67,14 @@ def test_retrieving_employee_by_admin(admin, employee, client):
                          "last_name":"Doe",
                          "date_joined":"2025-10-26T14:00:00Z"}
 
+
+def test_retrieving_non_existing_employee():
+    assert 1 == 2
+
+
+def test_retrieving_employee_by_regular_user():
+    assert 1 == 2
+
+
+def test_retrieving_employee_by_anonymous_user():
+    assert 1 == 2
