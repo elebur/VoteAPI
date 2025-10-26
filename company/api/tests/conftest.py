@@ -18,5 +18,13 @@ def admin(db):
 
 
 @pytest.fixture
+def user(db):
+    User = get_user_model()
+    return User.objects.create_superuser(username="username",
+                                         password="password",
+                                         email="user@name.com")
+
+
+@pytest.fixture
 def client():
     return APIClient()
