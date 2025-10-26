@@ -4,9 +4,6 @@ services:
       context: .
     command: bash -c "
       python /app/company/manage.py migrate
-      && python /app/company/manage.py createsuperuser --noinput \
-        --username \$DJANGO_SUPERUSER_USERNAME \
-        --email \$DJANGO_SUPERUSER_EMAIL || true
       && python /app/company/manage.py runserver 0.0.0.0:8000"
     container_name: vote_api
     ports:

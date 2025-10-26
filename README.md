@@ -1,12 +1,15 @@
 # How to run the project
-## Clone the repo
-`git clone git@github.com:elebur/VoteAPI.git'
+* Clone the repo `git clone git@github.com:elebur/VoteAPI.git`
+* Build the docker images `docker compose build`
+* Run docker compose `docker compose up`
 
-## Build the docker images
-`docker compose build`
+## Create superuser
+* Connect to the container `docker exec -it vote_api bash`
+* `cd company/`
+* `python manage.py createsuperuser`
+* Provide credentials for the new super user
+* `exit` - to return to the host terminal
 
-## Run docker compose
-`docker compose up`
 
 ## Using the service
 The service will be available under this address http://127.0.0.1:8000/
