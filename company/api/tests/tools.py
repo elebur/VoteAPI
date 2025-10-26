@@ -15,3 +15,8 @@ def get_jwt_for_user(user):
         'refresh': str(refresh),
         'access': str(refresh.access_token),
     }
+
+def auth_client(client, jwt):
+    client.credentials(HTTP_AUTHORIZATION="Bearer "+ jwt["access"])
+
+    return client
