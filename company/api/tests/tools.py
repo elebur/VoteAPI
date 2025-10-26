@@ -2,6 +2,8 @@ import json
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
+PERMISSION_ERROR = '{"detail":"You do not have permission to perform this action."}'
+
 
 def de_json(text: str) -> dict:
     return json.loads(text)
