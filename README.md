@@ -123,9 +123,7 @@ The body of the request:
 
 ```json
 {
-    // integer
     "employee_id": 1,
-    // bool
     "like": false
 }
 ```
