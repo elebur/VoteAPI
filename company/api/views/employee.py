@@ -11,6 +11,8 @@ from api.serializers import EmployeeSerializer
 
 
 @api_view(["GET"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def get_employee(request: Request, pk: int):
     e = get_object_or_404(Employee, pk=pk)
     serializer = EmployeeSerializer(e, many=False)
