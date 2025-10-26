@@ -1,5 +1,6 @@
 # How to run the project
 * Clone the repo `git clone git@github.com:elebur/VoteAPI.git`
+* `cd VoteAPI`
 * Build the docker images `docker compose build`
 * Run docker compose `docker compose up`
 
@@ -20,8 +21,17 @@ The service will be available under this address http://127.0.0.1:8000/
 * `python company/manage.py runserver`
 
 # Testing
-`pytest` (in the directory with the `manage.py`)
-* pytest will use `settings_test.py` (this can be changed in the `pytest.ini' file)
+* `python3 -m venv .venv` (in the folder with requirements.txt)
+
+>  On Ubuntu you might need to install `venv` for python3 - `sudo apt install python3-venv`
+
+* `source .venv/bin/activate`
+* (optional) `pip install --upgrade pip
+* `pip install -r requirements.txt`
+* `cd company`
+* `pytest` (in the directory with the `manage.py`)
+
+> pytest will use `settings_test.py` (this can be changed in the `pytest.ini` file)
 
 
 # Endpoints
@@ -76,7 +86,7 @@ The body of the request (all fields are required):
 The body of the request (all fields are required):
 ```json
 {
-     "name": "Pepo's"
+     "name": "Name of the restaurant"
 }
 ```
 ---
