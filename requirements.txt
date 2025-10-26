@@ -1,5 +1,8 @@
 django
 djangorestframework
-pytest-django
 djangorestframework-simplejwt
 psycopg[binary]
+
+pytest-django
+pytest-freezegun
+setuptools
