@@ -22,9 +22,11 @@ def admin(db):
 @pytest.fixture
 def user(db):
     User = get_user_model()
-    return User.objects.create_superuser(username="username",
-                                         password="password",
-                                         email="user@name.com")
+    return User.objects.create(username="username",
+                               password="password",
+                               email="user@name.com")
+
+
 @pytest.fixture
 def employee(db):
     User = get_user_model()
