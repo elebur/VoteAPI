@@ -1,6 +1,7 @@
 from django.db import transaction
 from django.contrib.auth.models import User
-from rest_framework import serializers
+from rest_framework import serializers, status
+from rest_framework.exceptions import ValidationError
 
 from base import models
 
@@ -17,6 +18,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
                   "last_name", "user", "date_joined")
 
     def create(self, validated_data: dict):
+        u = User.objects.filter(username=validated_data["username"]).first()
+
+        if u:
+            err_msg = f"The username '{validated_data['username']}' is already in use"
+            raise ValidationError(detail=err_msg, code=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.create_user(username=validated_data["username"],
                                         password=validated_data["password"],
                                         email=validated_data["email"])
