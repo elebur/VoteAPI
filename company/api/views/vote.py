@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from base.models import Employee, Menu, Vote
 from api.serializers import DoVoteSerializer
@@ -31,6 +33,8 @@ def get_vote_results(request: Request):
 
 @csrf_exempt
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def do_vote(request: Request, menu_id: int):
     menu = get_object_or_404(Menu, pk=menu_id)
 

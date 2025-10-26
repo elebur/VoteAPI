@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from base.models import Restaurant
 from api.serializers import RestaurantSerializer
@@ -16,6 +18,8 @@ def get_restaurant(request: Request, pk: int):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def create_restaurant(request: Request):
     serializer = RestaurantSerializer(data=request.data)
 

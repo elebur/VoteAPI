@@ -1,8 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from base.models import Employee
 from api.serializers import EmployeeSerializer
@@ -16,6 +18,8 @@ def get_employee(request: Request, pk: int):
 
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAdminUser])
 def add_employee(request: Request):
     serializer = EmployeeSerializer(data=request.data)
 
