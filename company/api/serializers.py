@@ -15,7 +15,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = models.Employee
         fields = ("id", "username", "password",
                   "email", "first_name",
-                  "last_name", "user", "date_joined")
+                  "last_name", "date_joined")
 
     def create(self, validated_data: dict):
         u = User.objects.filter(username=validated_data["username"]).first()
