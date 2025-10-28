@@ -53,6 +53,13 @@ class MenuSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         menu_items_data = validated_data.pop("items")
+        if not menu_items_data:
+            err_msg = {
+                "details": ("'items' is the required parameter. "
+                            "It can\'t be null or an empty array")
+            }
+            raise ValidationError(detail=err_msg)
+
         with transaction.atomic():
             menu = models.Menu.objects.create(**validated_data)
             for item in menu_items_data:
