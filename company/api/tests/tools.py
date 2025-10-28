@@ -3,7 +3,8 @@ import json
 from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
-PERMISSION_ERROR = '{"detail":"You do not have permission to perform this action."}'
+PERMISSION_ERROR_403 = '{"detail":"You do not have permission to perform this action."}'
+AUTH_REQUIRED_401 = '{"detail":"Authentication credentials were not provided."}'
 
 
 def de_json(text: str) -> dict:

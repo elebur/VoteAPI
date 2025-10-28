@@ -3,7 +3,11 @@ from types import MappingProxyType
 import pytest
 from rest_framework.test import APIClient
 
-from api.tests.tools import get_jwt_for_user, auth_client, PERMISSION_ERROR, de_json
+from api.tests.tools import (get_jwt_for_user,
+                             auth_client,
+                             PERMISSION_ERROR_403,
+                             AUTH_REQUIRED_401,
+                             de_json)
 
 # Using MappingProxyType to simulate "frozendict".
 PAYLOAD = MappingProxyType({"first_name": "User",
@@ -44,7 +48,7 @@ def test_creation_by_not_admin(client, user):
 
     resp = client.post(endpoint, payload)
 
-    assert resp.text == PERMISSION_ERROR
+    assert resp.text == PERMISSION_ERROR_403
     assert resp.status_code == 403
 
 
@@ -117,7 +121,7 @@ def test_creation_by_anonymous_user(client):
     resp = client.post(endpoint, PAYLOAD)
 
     assert resp.status_code == 401
-    assert resp.text == '{"detail":"Authentication credentials were not provided."}'
+    assert resp.text == AUTH_REQUIRED_401
 
 
 @pytest.mark.freeze_time("2025-10-26T14:00:00")
@@ -139,7 +143,6 @@ def test_retrieving_non_existing_employee(admin, client):
     client = auth_client(client, jwt)
     resp = client.get(endpoint + "9999/")
 
-
     assert resp.status_code == 404
     assert resp.text == '{"detail":"No Employee matches the given query."}'
 
@@ -158,7 +161,7 @@ def test_retrieving_employee_by_regular_user(user, admin, employee):
     assert "first_name" in resp_admin.text and "last_name" in resp_admin.text
     # ... and a regular user can't access the employee.
     assert resp_user.status_code == 403
-    assert resp_user.text == '{"detail":"You do not have permission to perform this action."}'
+    assert resp_user.text == PERMISSION_ERROR_403
 
 
 def test_retrieving_employee_by_anonymous_user(client, admin, employee):
@@ -174,6 +177,4 @@ def test_retrieving_employee_by_anonymous_user(client, admin, employee):
     assert "first_name" in resp_admin.text and "last_name" in resp_admin.text
     # ... and an anonymous user can't access the employee.
     assert anon_user.status_code == 401
-    assert anon_user.text == '{"detail":"Authentication credentials were not provided."}'
-
-
+    assert anon_user.text == AUTH_REQUIRED_401
