@@ -1,5 +1,6 @@
 import json
 
+from rest_framework.test import APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
 
 PERMISSION_ERROR = '{"detail":"You do not have permission to perform this action."}'
@@ -16,7 +17,7 @@ def get_jwt_for_user(user):
         'access': str(refresh.access_token),
     }
 
-def auth_client(client, jwt):
+def auth_client(client, jwt) -> APIClient:
     client.credentials(HTTP_AUTHORIZATION="Bearer "+ jwt["access"])
 
     return client
