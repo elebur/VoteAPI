@@ -10,6 +10,16 @@ from base.models import Employee, Restaurant
 
 sys.path.append(Path(__file__).resolve().parent)  # type:ignore
 
+class _JsonAPIClient(APIClient):
+    """
+    A simple wrapper to get rid of typing 'format="json"' in each
+    POST request.
+    """
+    def post(self, path, data=None, format="json", content_type=None,
+             follow=False, **extra):
+        return super().post(path, data=data, format=format,
+                            content_type=content_type, follow=follow, **extra)
+
 
 @pytest.fixture
 def admin(db):
@@ -45,4 +55,4 @@ def restaurant(db):
 
 @pytest.fixture
 def client():
-    return APIClient()
+    return _JsonAPIClient()
