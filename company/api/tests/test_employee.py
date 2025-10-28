@@ -37,7 +37,7 @@ def test_creation_with_duplicate_username(admin, user, client):
     resp = client.post(endpoint, PAYLOAD)
 
     assert resp.status_code == 400
-    assert resp.text == '["The username \'username\' is already in use"]'
+    assert resp.text == '{"details":"The username \'username\' is already in use"}'
 
 
 def test_creation_by_not_admin(client, user):

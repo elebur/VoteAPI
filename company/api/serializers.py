@@ -21,8 +21,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         u = User.objects.filter(username=validated_data["username"]).first()
 
         if u:
-            err_msg = f"The username '{validated_data['username']}' is already in use"
-            raise ValidationError(detail=err_msg, code=status.HTTP_400_BAD_REQUEST)
+            err_msg = {
+                "details": (f"The username '{validated_data['username']}' "
+                            "is already in use")
+            }
+            raise ValidationError(detail=err_msg)
 
         user = User.objects.create_user(username=validated_data["username"],
                                         password=validated_data["password"],
