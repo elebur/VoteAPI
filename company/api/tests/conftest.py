@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 import pytest
 
-from base.models import Employee
+from base.models import Employee, Restaurant
 
 
 sys.path.append(Path(__file__).resolve().parent)  # type:ignore
@@ -36,6 +36,11 @@ def employee(db):
     return Employee.objects.create(first_name="John",
                                    last_name="Doe",
                                    user=user)
+
+
+@pytest.fixture
+def restaurant(db):
+    return Restaurant.objects.create(name="Restaurant")
 
 
 @pytest.fixture
