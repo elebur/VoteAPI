@@ -50,6 +50,7 @@ def get_menus_by_date(request: Request, year: int, month: int, day: int):
     serializer = MenuSerializer(menus, many=True)
     return Response(serializer.data)
 
+
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])

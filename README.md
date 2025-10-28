@@ -26,7 +26,7 @@ The service will be available under this address http://127.0.0.1:8000/
 >  On Ubuntu you might need to install `venv` for python3 - `sudo apt install python3-venv`
 
 * `source .venv/bin/activate`
-* (optional) `pip install --upgrade pip
+* (optional) `pip install --upgrade pip`
 * `pip install -r requirements.txt`
 * `cd company`
 * `pytest` (in the directory with the `manage.py`)

@@ -33,7 +33,3 @@ def test_refresh_token(admin, client):
     resp = client.post("/api/token/refresh/", payload)
 
     assert "access" in resp.text and "refresh" not in resp.text
-
-
-def test_refresh_with_wrong_refresh_token():
-    assert 1 == 2
