@@ -4,7 +4,11 @@ from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
+from rest_framework.decorators import (api_view,
+                                       authentication_classes,
+                                       permission_classes)
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -47,6 +51,8 @@ def get_menus_by_date(request: Request, year: int, month: int, day: int):
     return Response(serializer.data)
 
 @api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
 def create_menu(request: Request):
     serializer = MenuSerializer(data=request.data)
 
