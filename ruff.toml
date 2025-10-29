@@ -1,0 +1,9 @@
+# line-length = 120
+
+[lint]
+select = ["ALL"]
+
+[lint.per-file-ignores]
+# Here you can find what these codes are stand for
+# https://docs.astral.sh/ruff/rules/
+"company/api/tests/*" = ["ANN201", "ANN001", "ARG001", "S101", "D"]
