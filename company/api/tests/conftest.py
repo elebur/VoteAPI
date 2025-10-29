@@ -91,10 +91,7 @@ def multiple_menus(db):
     menu4.items.create(restaurant=r4, title="Item#4_2", description="Descr#4_2")
     menu4.items.create(restaurant=r4, title="Item#4_3", description="Descr#4_3")
 
-    return menu
-
-
-
+    return (menu1, menu2, menu3, menu4)
 
 
 @pytest.fixture
