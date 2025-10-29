@@ -49,7 +49,7 @@ def do_vote(request: Request, menu_id: int):
         # An employee can't vote multiple times
         if vote:
             status_code = status.HTTP_400_BAD_REQUEST
-            action = "liked" if vote.like else "dislike"
+            action = "liked" if vote.like else "disliked"
             err_msg = (f"You've already {action} this menu '{menu.title}'.")
             result = {"details": err_msg}
         else:
