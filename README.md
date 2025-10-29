@@ -137,7 +137,6 @@ The body of the request:
 
 ```json
 {
-    "employee_id": 1,
     "like": false
 }
 ```
