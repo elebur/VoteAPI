@@ -5,10 +5,11 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from base.models import Employee, Menu, Vote
+from base.models import Menu, Vote
 from api.serializers import DoVoteSerializer
 
 
@@ -36,12 +37,14 @@ def get_vote_results(request: Request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def do_vote(request: Request, menu_id: int):
+    if not hasattr(request.user, "employee"):
+        raise NotFound(detail={"details": "Employee not found"})
     menu = get_object_or_404(Menu, pk=menu_id)
 
     serializer = DoVoteSerializer(data=request.data)
 
     if serializer.is_valid():
-        emp = get_object_or_404(Employee, pk=serializer.data["employee_id"]) # type: ignore
+        emp = request.user.employee
         vote = Vote.objects.filter(menu=menu, employee=emp).first()
         # An employee can't vote multiple times
         if vote:
