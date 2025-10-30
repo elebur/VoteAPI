@@ -1,53 +1,55 @@
-from datetime import timedelta
+# ruff: noqa: S106
 import sys
+from datetime import timedelta
 from pathlib import Path
 
-from django.contrib.auth import get_user_model
-from django.utils import timezone
-from rest_framework.test import APIClient
 import pytest
+from django.contrib.auth.models import User
+from django.utils import timezone
+from rest_framework.response import Response
+from rest_framework.test import APIClient
 
-from base.models import Employee, Restaurant, Menu
+from base.models import Employee, Menu, Restaurant
 
-
-sys.path.append(Path(__file__).resolve().parent)  # type:ignore
+sys.path.append(str(Path(__file__).resolve().parent))
 
 class _JsonAPIClient(APIClient):
     """
     A simple wrapper to get rid of typing 'format="json"' in each
     POST request.
     """
-    def post(self, path, data=None, format="json", content_type=None,
-             follow=False, **extra):
-        return super().post(path, data=data, format=format,
-                            content_type=content_type, follow=follow, **extra)
+    def post(self, path, data=None, format="json", content_type=None,  # noqa: A002
+             follow=False, **extra) -> Response:  # noqa: ANN003, FBT002
+        return super().post(
+            path,
+            data=data,
+            format=format,
+            content_type=content_type,
+            follow=follow,
+            **extra,
+        )   # pyright: ignore[reportReturnType]
 
 
 @pytest.fixture
 def admin(db):
-    User = get_user_model()
-    return User.objects.create_superuser(username="admin",
-                                         password="password",
-                                         email="admin@mail.com")
+    return User.objects.create_superuser(
+        username="admin", password="password", email="admin@mail.com",
+    )
 
 
 @pytest.fixture
 def user(db):
-    User = get_user_model()
-    return User.objects.create(username="username",
-                               password="password",
-                               email="user@name.com")
+    return User.objects.create(
+        username="username", password="password", email="user@name.com",
+    )
 
 
 @pytest.fixture
 def employee(db):
-    User = get_user_model()
-    user = User.objects.create(username="employee",
-                               password="password",
-                               email="user@name.com")
-    return Employee.objects.create(first_name="John",
-                                   last_name="Doe",
-                                   user=user)
+    user = User.objects.create(
+        username="employee", password="password", email="user@name.com",
+    )
+    return Employee.objects.create(first_name="John", last_name="Doe", user=user)
 
 
 @pytest.fixture
@@ -58,10 +60,12 @@ def restaurant(db):
 @pytest.fixture
 def menu(db):
     restaurant = Restaurant.objects.create(name="Restaurant For Menu Fixture")
-    menu = Menu.objects.create(restaurant=restaurant,
-                               launch_date=timezone.now().date())
-    menu.items.create(restaurant=restaurant,
-                      title="Menu item", description="Description")
+    menu: Menu = Menu.objects.create(
+        restaurant=restaurant, launch_date=timezone.now().date(),
+    )
+    menu.items.create(
+        restaurant=restaurant, title="Menu item", description="Description",
+    )
 
     return menu
 

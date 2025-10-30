@@ -1,5 +1,10 @@
-from django.db import models
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.models import User
+from django.db import models
+
+if TYPE_CHECKING:
+    from django_stubs_ext.db.models.manager import ManyRelatedManager
 
 
 class BaseReprAndStr:
@@ -55,6 +60,9 @@ class Menu(BaseReprAndStr, models.Model):
 
     date_created = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
+
+    if TYPE_CHECKING:
+        items: ManyRelatedManager["MenuItem"]
 
 
 class MenuItem(BaseReprAndStr, models.Model):
