@@ -12,3 +12,4 @@ known-first-party = ["base"]
 # Here you can find what these codes are stand for
 # https://docs.astral.sh/ruff/rules/
 "company/api/tests/*" = ["ANN201", "ANN001", "ARG001", "S101", "D", "INP001"]
+"company/api/views/*" = ["D100"]

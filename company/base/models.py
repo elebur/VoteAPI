@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 if TYPE_CHECKING:
-    from django_stubs_ext.db.models.manager import ManyRelatedManager
+    from django_stubs_ext.db.models.manager import ManyRelatedManager, RelatedManager
 
 
 class BaseReprAndStr:
@@ -63,6 +63,8 @@ class Menu(BaseReprAndStr, models.Model):
 
     if TYPE_CHECKING:
         items: ManyRelatedManager["MenuItem"]
+        votes: RelatedManager["Vote"]
+        id: int
 
 
 class MenuItem(BaseReprAndStr, models.Model):
@@ -84,6 +86,9 @@ class Vote(models.Model):
                                  on_delete=models.CASCADE)
     like = models.BooleanField()
     voted_at = models.DateTimeField(auto_now_add=True)
+
+    if TYPE_CHECKING:
+        id: int
 
     def __repr__(self):
         return f"<Vote: Employee={self.employee.id}, like={self.like}, Menu={self.menu.id}>"  # type: ignore
