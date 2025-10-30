@@ -1,24 +1,30 @@
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework.response import Response
-from rest_framework.request import Request
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from rest_framework.decorators import (
+    api_view,
+    authentication_classes,
+    permission_classes,
+)
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from base.models import Menu, Vote
 from api.serializers import DoVoteSerializer
+from base.models import Menu, Vote
 
 
 @api_view(["GET"])
-def get_vote_results(request: Request):
+def get_vote_results(request: Request) -> Response:  # noqa: ARG001
+    """Return results for all today's menus."""
     today = timezone.now().date()
-    today_menu = Menu.objects.filter(launch_date=today)
-    result = list()
-    for menu in today_menu:
+    today_menus = Menu.objects.filter(launch_date=today)
+
+    result = []
+    for menu in today_menus:
         likes = menu.votes.filter(like=True).count()
         dislikes = menu.votes.filter(like=False).count()
         diff = likes - dislikes
@@ -36,7 +42,11 @@ def get_vote_results(request: Request):
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
-def do_vote(request: Request, menu_id: int):
+def do_vote(request: Request, menu_id: int) -> Response:
+    """Add for the menu.
+
+    The user must be authenticated and has related employee.
+    """
     if not hasattr(request.user, "employee"):
         raise NotFound(detail={"details": "Employee not found"})
     menu = get_object_or_404(Menu, pk=menu_id)
