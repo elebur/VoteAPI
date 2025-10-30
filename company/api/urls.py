@@ -1,7 +1,8 @@
-from django.urls import path
-from api.views.employee import get_employee, add_employee
-from api.views.restaurant import create_restaurant, get_restaurant
+from django.urls import path  # noqa: D100
+
+from api.views.employee import add_employee, get_employee
 from api.views.menu import get_menu_by_id, get_menus_by_date, process_menu
+from api.views.restaurant import create_restaurant, get_restaurant
 from api.views.vote import do_vote, get_vote_results
 
 urlpatterns = [
