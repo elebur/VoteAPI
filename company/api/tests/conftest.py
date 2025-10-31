@@ -63,7 +63,9 @@ def restaurant(db):
 @pytest.fixture
 def menu(db):
     r_user = User.objects.create(
-        username="menu_restaurant_user", password="password", email="restaurant@name.com",
+        username="menu_restaurant_user",
+        password="password",
+        email="restaurant@name.com",
     )
     restaurant = Restaurant.objects.create(
         name="Restaurant For Menu Fixture", user=r_user,
