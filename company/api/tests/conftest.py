@@ -27,7 +27,7 @@ class _JsonAPIClient(APIClient):
             content_type=content_type,
             follow=follow,
             **extra,
-        )   # pyright: ignore[reportReturnType]
+        )  # pyright: ignore[reportReturnType]
 
 
 @pytest.fixture

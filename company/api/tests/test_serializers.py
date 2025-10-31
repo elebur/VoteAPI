@@ -12,28 +12,32 @@ class TestMenuSerializerWithDuplicatedItems:
             "notes": "Notes",
             "launch_date": "2025-10-10",
             "items": [],
-        }
+        },
     )
     items_raw_data = (
         {
             "title": "Bruschetta al Pomodoro",
-            "description": "Toasted bread topped with fresh tomatoes, basil, and olive oil.",
+            "description": ( "Toasted bread topped with fresh "
+                            "tomatoes, basil, and olive oil." ),
         },
         {
             "title": "Risotto ai Funghi Porcini",
-            "description": "Creamy risotto with porcini mushrooms and Parmesan cheese.",
+            "description": ("Creamy risotto with porcini "
+                            "mushrooms and Parmesan cheese."),
         },
         {
             "title": "Spaghetti Carbonara",
-            "description": "Classic pasta with egg, pancetta, and Pecorino Romano cheese.",
+            "description": ("Classic pasta with egg, pancetta, "
+                            "and Pecorino Romano cheese."),
         },
         {
             "title": "Lasagna alla Bolognese",
-            "description": "Layered pasta with Bolognese meat sauce and béchamel cream.",
+            "description": "Layered pasta with Bolognese meat sauce and béchamel cream",
         },
         {
             "title": "Tiramisu",
-            "description": "Traditional Italian dessert made with mascarpone, coffee, and cocoa.",
+            "description": ("Traditional Italian dessert made "
+                            "with mascarpone, coffee, and cocoa."),
         },
     )
 
@@ -55,7 +59,7 @@ class TestMenuSerializerWithDuplicatedItems:
         ser.create(ser.validated_data)
 
         # Added two menu items and one menu.
-        assert MenuItem.objects.count() == 2
+        assert MenuItem.objects.count() == 2  # noqa: PLR2004
         assert Menu.objects.count() == 1
 
         # Creating a new menu with the same data except the 'launch_date'
@@ -67,8 +71,8 @@ class TestMenuSerializerWithDuplicatedItems:
 
         # After the second call with the same items we must
         # get +1 menu and no new menu items.
-        assert MenuItem.objects.count() == 2
-        assert Menu.objects.count() == 2
+        assert MenuItem.objects.count() == 2  # noqa: PLR2004
+        assert Menu.objects.count() == 2  # noqa: PLR2004
 
     def test_same_item_name_with_different_description(self, restaurant):
         data = self.menu_raw_data.copy()
@@ -85,7 +89,7 @@ class TestMenuSerializerWithDuplicatedItems:
 
         # Ensure that there are exactly two menu items
         # and they have predefined description.
-        assert MenuItem.objects.count() == 2
+        assert MenuItem.objects.count() == 2  # noqa: PLR2004
         item_init_1, item_init_2 = MenuItem.objects.all()
         assert item_init_1.description == "Init description #1"
         assert item_init_2.description == "Init description #2"
@@ -101,7 +105,7 @@ class TestMenuSerializerWithDuplicatedItems:
 
         # Ensure that we still have two items and
         # they both have updated descriptions.
-        assert MenuItem.objects.count() == 2
+        assert MenuItem.objects.count() == 2  # noqa: PLR2004
         item1, item2 = MenuItem.objects.all()
         assert item1.description == "New description #1"
         assert item2.description == "New description #2"

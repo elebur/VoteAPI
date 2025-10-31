@@ -1,20 +1,23 @@
 from types import MappingProxyType
 
 import pytest
+from rest_framework import status
 from rest_framework.test import APIClient
 
-from api.tests.tools import (get_jwt_for_user,
-                             auth_client,
-                             PERMISSION_ERROR_403,
-                             AUTH_REQUIRED_401,
-                             de_json)
+from api.tests.tools import (
+    AUTH_REQUIRED_401,
+    PERMISSION_ERROR_403,
+    auth_client,
+    de_json,
+    get_jwt_for_user,
+)
 
 # Using MappingProxyType to simulate "frozendict".
 PAYLOAD = MappingProxyType({"first_name": "User",
                             "last_name": "Name",
                             "username": "username",
                             "password": "password",
-                            "email": "user@name.com"
+                            "email": "user@name.com",
                             })
 
 endpoint = "/api/employee/"
@@ -27,7 +30,7 @@ def test_employee_creation(admin, client):
     resp = client.post(endpoint, PAYLOAD)
 
     assert resp.text == '{"employee_id":1}'
-    assert resp.status_code == 201
+    assert resp.status_code == status.HTTP_201_CREATED
 
 
 def test_creation_with_duplicate_username(admin, user, client):
@@ -36,7 +39,7 @@ def test_creation_with_duplicate_username(admin, user, client):
 
     resp = client.post(endpoint, PAYLOAD)
 
-    assert resp.status_code == 400
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":"The username \'username\' is already in use"}'
 
 
@@ -49,7 +52,7 @@ def test_creation_by_not_admin(client, user):
     resp = client.post(endpoint, payload)
 
     assert resp.text == PERMISSION_ERROR_403
-    assert resp.status_code == 403
+    assert resp.status_code == status.HTTP_403_FORBIDDEN
 
 
 def test_creation_without_username(admin, client):
@@ -61,7 +64,7 @@ def test_creation_without_username(admin, client):
 
     resp = client.post(endpoint, payload)
 
-    assert resp.status_code == 400
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":{"username":["This field is required."]}}'
 
 
@@ -74,7 +77,7 @@ def test_creation_without_password(admin, client):
 
     resp = client.post(endpoint, payload)
 
-    assert resp.status_code == 400
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":{"password":["This field is required."]}}'
 
 
@@ -87,7 +90,7 @@ def test_creation_without_first_name(admin, client):
 
     resp = client.post(endpoint, payload)
 
-    assert resp.status_code == 400
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":{"first_name":["This field is required."]}}'
 
 
@@ -100,7 +103,7 @@ def test_creation_without_last_name(admin, client):
 
     resp = client.post(endpoint, payload)
 
-    assert resp.status_code == 400
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":{"last_name":["This field is required."]}}'
 
 
@@ -113,14 +116,14 @@ def test_creation_without_email(admin, client):
 
     resp = client.post(endpoint, payload)
 
-    assert resp.status_code == 400
+    assert resp.status_code == status.HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":{"email":["This field is required."]}}'
 
 
 def test_creation_by_anonymous_user(client):
     resp = client.post(endpoint, PAYLOAD)
 
-    assert resp.status_code == 401
+    assert resp.status_code == status.HTTP_401_UNAUTHORIZED
     assert resp.text == AUTH_REQUIRED_401
 
 
@@ -143,7 +146,7 @@ def test_retrieving_non_existing_employee(admin, client):
     client = auth_client(client, jwt)
     resp = client.get(endpoint + "9999/")
 
-    assert resp.status_code == 404
+    assert resp.status_code == status.HTTP_404_NOT_FOUND
     assert resp.text == '{"detail":"No Employee matches the given query."}'
 
 
@@ -157,10 +160,11 @@ def test_retrieving_employee_by_regular_user(user, admin, employee):
     resp_admin = client_admin.get(url)
 
     # Ensure that an admin can access the employee...
-    assert resp_admin.status_code == 200
-    assert "first_name" in resp_admin.text and "last_name" in resp_admin.text
+    assert resp_admin.status_code == status.HTTP_200_OK
+    assert "first_name" in resp_admin.text
+    assert "last_name" in resp_admin.text
     # ... and a regular user can't access the employee.
-    assert resp_user.status_code == 403
+    assert resp_user.status_code == status.HTTP_403_FORBIDDEN
     assert resp_user.text == PERMISSION_ERROR_403
 
 
@@ -173,8 +177,9 @@ def test_retrieving_employee_by_anonymous_user(client, admin, employee):
     resp_admin = client_admin.get(url)
 
     # Ensure that an admin can access the employee...
-    assert resp_admin.status_code == 200
-    assert "first_name" in resp_admin.text and "last_name" in resp_admin.text
+    assert resp_admin.status_code == status.HTTP_200_OK
+    assert "first_name" in resp_admin.text
+    assert "last_name" in resp_admin.text
     # ... and an anonymous user can't access the employee.
-    assert anon_user.status_code == 401
+    assert anon_user.status_code == status.HTTP_401_UNAUTHORIZED
     assert anon_user.text == AUTH_REQUIRED_401

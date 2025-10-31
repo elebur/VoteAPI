@@ -1,20 +1,21 @@
 import random
-import string
+from string import ascii_letters
 
 import pytest
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
-from base.models import User, Employee, Vote
 from api.tests.tools import auth_client, de_json, get_jwt_for_user
+from base.models import Employee, User, Vote
 
 ENDPOINT_RESULTS = "/api/vote/results/"
 ENDPOINT_VOTE = "/api/menu/%s/vote/"
 
 
 def generate_employees(count=1):
-    def randstring(from_=4, to=10):
-        return "".join(random.choices(string.ascii_letters, k=random.randint(from_, to)))
+    def randstring(from_=4, to=10) -> str:
+        return "".join(random.choices(ascii_letters, k=random.randint(from_, to)))  # noqa: S311
 
-    result = list()
+    result = []
     for _ in range(count):
         username = randstring()
         password = randstring()
@@ -49,7 +50,7 @@ def test_vote(client, menu, employee):
 def test_retrieve_with_votes(client, menu):
     employees = generate_employees(5)
     for i, empl in enumerate(employees):
-        like = True if i % 2 == 0 else False
+        like = i % 2 == 0
 
         menu.votes.create(menu=menu, employee=empl, like=like)
 
@@ -67,7 +68,7 @@ def test_retrieve_on_the_day_without_menus(client):
 
 def test_retrieve_results_with_multiple_menus(client, multiple_menus):
     employees = generate_employees(6)
-    m1, m2, m3, m4 = multiple_menus
+    m1, m2, _, m4 = multiple_menus
 
     # Menu #1 - all likes
     [Vote.objects.create(menu=m1, employee=e, like=True) for e in employees]
@@ -79,7 +80,7 @@ def test_retrieve_results_with_multiple_menus(client, multiple_menus):
 
     # Menu #4 - 3 likes, 3 dislikes
     for i, e in enumerate(employees):
-        like = True if i%2 == 0 else False
+        like = i % 2 == 0
         Vote.objects.create(menu=m4, employee=e, like=like)
 
     resp = client.get(ENDPOINT_RESULTS)
@@ -87,7 +88,7 @@ def test_retrieve_results_with_multiple_menus(client, multiple_menus):
     assert de_json(resp.text) == [
         {"menu_id": 1, "likes": 6, "dislikes": 0, "result": 6},
         {"menu_id": 3, "likes": 0, "dislikes": 0, "result": 0},
-        {"menu_id": 4, "likes": 3, "dislikes": 3, "result": 0}
+        {"menu_id": 4, "likes": 3, "dislikes": 3, "result": 0},
     ]
 
 
@@ -100,10 +101,10 @@ def test_vote_multiple_times(client, menu, employee):
     resp_duplicate = client.post(ENDPOINT_VOTE%menu.id, payload)
 
     assert resp_init.text == '{"vote_id":1,"action":"liked"}'
-    assert resp_init.status_code == 200
+    assert resp_init.status_code == HTTP_200_OK
 
     assert resp_duplicate.text == '{"details":"You\'ve already liked this menu \'\'."}'
-    assert resp_duplicate.status_code == 400
+    assert resp_duplicate.status_code == HTTP_400_BAD_REQUEST
 
 
 
@@ -117,10 +118,10 @@ def test_vote_set_like_then_dislike_for_same_menu(client, employee, menu):
     resp_duplicate = client.post(ENDPOINT_VOTE%menu.id, payload)
 
     assert resp_init.text == '{"vote_id":1,"action":"liked"}'
-    assert resp_init.status_code == 200
+    assert resp_init.status_code == HTTP_200_OK
 
     assert resp_duplicate.text == '{"details":"You\'ve already liked this menu \'\'."}'
-    assert resp_duplicate.status_code == 400
+    assert resp_duplicate.status_code == HTTP_400_BAD_REQUEST
 
 
 def test_vote_set_dislike_then_like_for_same_menu(client, employee, menu):
@@ -133,10 +134,11 @@ def test_vote_set_dislike_then_like_for_same_menu(client, employee, menu):
     resp_duplicate = client.post(ENDPOINT_VOTE%menu.id, payload)
 
     assert resp_init.text == '{"vote_id":1,"action":"disliked"}'
-    assert resp_init.status_code == 200
+    assert resp_init.status_code == HTTP_200_OK
 
-    assert resp_duplicate.text == '{"details":"You\'ve already disliked this menu \'\'."}'
-    assert resp_duplicate.status_code == 400
+    assert resp_duplicate.text == ('{"details":"You\'ve already '
+                                   'disliked this menu \'\'."}')
+    assert resp_duplicate.status_code == HTTP_400_BAD_REQUEST
 
 
 def test_with_non_existing_employee(client, user, menu):
@@ -150,4 +152,4 @@ def test_with_non_existing_employee(client, user, menu):
     resp = client.post(ENDPOINT_VOTE%menu.id, payload)
 
     assert resp.text == '{"details":"Employee not found"}'
-    assert resp.status_code == 404
+    assert resp.status_code == HTTP_404_NOT_FOUND

@@ -1,14 +1,24 @@
 from types import MappingProxyType
 
 import pytest
+from rest_framework.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+    HTTP_400_BAD_REQUEST,
+    HTTP_401_UNAUTHORIZED,
+    HTTP_403_FORBIDDEN,
+    HTTP_404_NOT_FOUND,
+)
 
-from api.tests.tools import (AUTH_REQUIRED_401,
-                             auth_client,
-                             get_jwt_for_user,
-                             PERMISSION_ERROR_403)
+from api.tests.tools import (
+    AUTH_REQUIRED_401,
+    PERMISSION_ERROR_403,
+    auth_client,
+    get_jwt_for_user,
+)
 
 PAYLOAD = MappingProxyType({
-    "name": "RESTaurant's name"
+    "name": "RESTaurant's name",
 })
 
 ENDPOINT = "/api/restaurant/"
@@ -19,7 +29,7 @@ def test_create_by_admin(admin, client):
 
     resp = client.post(ENDPOINT, PAYLOAD)
 
-    assert resp.status_code == 201
+    assert resp.status_code == HTTP_201_CREATED
     assert resp.text == '{"restaurant_id":1}'
 
 
@@ -28,14 +38,14 @@ def test_create_by_user(user, client):
 
     resp = client.post(ENDPOINT, PAYLOAD)
 
-    assert resp.status_code == 403
+    assert resp.status_code == HTTP_403_FORBIDDEN
     assert resp.text == PERMISSION_ERROR_403
 
 
 def test_create_by_anonymous(client):
     resp = client.post(ENDPOINT, PAYLOAD)
 
-    assert resp.status_code == 401
+    assert resp.status_code == HTTP_401_UNAUTHORIZED
     assert resp.text == AUTH_REQUIRED_401
 
 
@@ -47,7 +57,7 @@ def test_create_with_duplicated_restaurant_name(client, admin):
     resp_duplicate = client.post(ENDPOINT, PAYLOAD)
 
 
-    assert resp_duplicate.status_code == 201
+    assert resp_duplicate.status_code == HTTP_201_CREATED
     assert resp_duplicate.text == '{"restaurant_id":2}'
 
 
@@ -59,7 +69,7 @@ def test_without_name_in_body(client, admin):
     payload["day"] = "Monday"
     resp = client.post(ENDPOINT, payload)
 
-    assert resp.status_code == 400
+    assert resp.status_code == HTTP_400_BAD_REQUEST
     assert resp.text == '{"details":{"name":["This field is required."]}}'
 
 
@@ -69,8 +79,9 @@ def test_retrieve_by_admin(client, admin, restaurant):
 
     resp = client.get(ENDPOINT + f"{restaurant.id}/")
 
-    assert resp.status_code == 200
-    assert resp.text == '{"id":1,"name":"Restaurant","date_joined":"2025-10-26T14:00:00Z"}'
+    assert resp.status_code == HTTP_200_OK
+    assert resp.text == ('{"id":1,"name":"Restaurant",'
+                         '"date_joined":"2025-10-26T14:00:00Z"}')
 
 
 @pytest.mark.freeze_time("2025-10-26T14:00:00")
@@ -79,8 +90,9 @@ def test_retrieve_by_user(client, user, restaurant):
 
     resp = client.get(ENDPOINT + f"{restaurant.id}/")
 
-    assert resp.status_code == 200
-    assert resp.text == '{"id":1,"name":"Restaurant","date_joined":"2025-10-26T14:00:00Z"}'
+    assert resp.status_code == HTTP_200_OK
+    assert resp.text == ('{"id":1,"name":"Restaurant",'
+                         '"date_joined":"2025-10-26T14:00:00Z"}')
 
 
 @pytest.mark.freeze_time("2025-10-26T14:00:00")
@@ -88,12 +100,13 @@ def test_retrieve_by_anonymous(client, restaurant):
 
     resp = client.get(ENDPOINT + f"{restaurant.id}/")
 
-    assert resp.status_code == 200
-    assert resp.text == '{"id":1,"name":"Restaurant","date_joined":"2025-10-26T14:00:00Z"}'
+    assert resp.status_code == HTTP_200_OK
+    assert resp.text == ('{"id":1,"name":"Restaurant",'
+                         '"date_joined":"2025-10-26T14:00:00Z"}')
 
 
 def test_retrieve_non_existing(client, restaurant):
     resp = client.get(ENDPOINT + f"{restaurant.id+999}/")
 
-    assert resp.status_code == 404
+    assert resp.status_code == HTTP_404_NOT_FOUND
     assert resp.text == '{"detail":"No Restaurant matches the given query."}'
