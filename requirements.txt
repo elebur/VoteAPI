@@ -7,3 +7,6 @@ pytest-django
 pytest-freezegun
 setuptools
 django-stubs
+
+pre-commit
+ruff

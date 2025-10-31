@@ -1,0 +1,21 @@
+# .pre-commit-config.yml
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: ruff
+        entry: ruff
+        language: system
+        types: [python]
+        args: [check]
+        # Run tests only if files in the next directories were changed.
+        # This is the Regex (changed filepath starts with 'company/' or 'tests/')
+        files: ^(company/|tests/)
+      - id: tests
+        name: Run tests
+        entry: bash -c "source .venv/bin/activate && cd company && python -m pytest -v"
+        language: system
+        verbose: true
+        # Run tests only if files in the next directories were changed.
+        # This is the Regex (changed filepath starts with 'company/' or 'tests/')
+        files: ^(company/|tests/)
