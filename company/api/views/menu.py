@@ -10,6 +10,7 @@ from rest_framework.decorators import (
     authentication_classes,
     permission_classes,
 )
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -65,6 +66,8 @@ def get_menus_by_date(request: Request, year: int, month: int, day: int) -> Resp
 @permission_classes([IsAuthenticated])
 def create_menu(request: Request) -> Response:
     """Create new menu."""
+    if not hasattr(request.user, "restaurant"):
+        raise PermissionDenied
     serializer = MenuSerializer(data=request.data)
 
     if serializer.is_valid():

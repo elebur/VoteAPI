@@ -6,10 +6,17 @@ from rest_framework.status import (
     HTTP_201_CREATED,
     HTTP_400_BAD_REQUEST,
     HTTP_401_UNAUTHORIZED,
+    HTTP_403_FORBIDDEN,
     HTTP_404_NOT_FOUND,
 )
 
-from api.tests.tools import AUTH_REQUIRED_401, auth_client, de_json, get_jwt_for_user
+from api.tests.tools import (
+    AUTH_REQUIRED_401,
+    PERMISSION_ERROR_403,
+    auth_client,
+    de_json,
+    get_jwt_for_user,
+)
 
 MENU_ITEMS = (
     {
@@ -93,8 +100,8 @@ def test_create_by_admin(admin, client, restaurant):
 
     resp = client.post(ENDPOINT, MENU_REQUEST_BODY)
 
-    assert resp.status_code == HTTP_201_CREATED
-    assert resp.text == '{"menu_id":1}'
+    assert resp.text == PERMISSION_ERROR_403
+    assert resp.status_code == HTTP_403_FORBIDDEN
 
 
 def test_create_by_user(user, client, restaurant):
@@ -102,8 +109,8 @@ def test_create_by_user(user, client, restaurant):
 
     resp = client.post(ENDPOINT, MENU_REQUEST_BODY)
 
-    assert resp.text == '{"menu_id":1}'
-    assert resp.status_code == HTTP_201_CREATED
+    assert resp.text == PERMISSION_ERROR_403
+    assert resp.status_code == HTTP_403_FORBIDDEN
 
 
 def test_create_by_anonymous(client, restaurant):
@@ -114,8 +121,8 @@ def test_create_by_anonymous(client, restaurant):
     assert resp.status_code == HTTP_401_UNAUTHORIZED
 
 
-def test_create_without_items(user, client, restaurant):
-    client = auth_client(client, get_jwt_for_user(user))
+def test_create_without_items(client, restaurant):
+    client = auth_client(client, get_jwt_for_user(restaurant))
 
     payload = deepcopy(MENU_REQUEST_BODY)
     payload["items"] = []
@@ -127,8 +134,8 @@ def test_create_without_items(user, client, restaurant):
     assert resp.status_code == HTTP_400_BAD_REQUEST
 
 
-def test_create_with_item_without_title(client, user, restaurant):
-    client = auth_client(client, get_jwt_for_user(user))
+def test_create_with_item_without_title(client, restaurant):
+    client = auth_client(client, get_jwt_for_user(restaurant))
 
     payload = deepcopy(MENU_REQUEST_BODY)
     payload["items"][0].pop("title")
@@ -140,8 +147,8 @@ def test_create_with_item_without_title(client, user, restaurant):
     assert resp.status_code == HTTP_400_BAD_REQUEST
 
 
-def test_create_with_item_without_description(client, user, restaurant):
-    client = auth_client(client, get_jwt_for_user(user))
+def test_create_with_item_without_description(client, restaurant):
+    client = auth_client(client, get_jwt_for_user(restaurant))
 
     payload = deepcopy(MENU_REQUEST_BODY)
     payload["items"][0].pop("description")
@@ -153,31 +160,8 @@ def test_create_with_item_without_description(client, user, restaurant):
     assert resp.status_code == HTTP_400_BAD_REQUEST
 
 
-def test_admin_creates_menu_without_restaurant(admin, client, restaurant):
-    client = auth_client(client, get_jwt_for_user(admin))
-
-    payload = deepcopy(MENU_REQUEST_BODY)
-    payload.pop("restaurant")
-    resp = client.post(ENDPOINT, payload)
-
-    assert resp.text == '{"details":{"restaurant":["This field is required."]}}'
-    assert resp.status_code == HTTP_400_BAD_REQUEST
-
-
-def test_admin_creates_menu_with_non_existing_restaurant(admin, client, restaurant):
-    client = auth_client(client, get_jwt_for_user(admin))
-
-    payload = deepcopy(MENU_REQUEST_BODY)
-    payload["restaurant"] = 9999
-    resp = client.post(ENDPOINT, payload)
-
-    assert resp.text == ('{"details":{"restaurant":'
-                         '["Invalid pk \\"9999\\" - object does not exist."]}}')
-    assert resp.status_code == HTTP_400_BAD_REQUEST
-
-
-def test_create_without_title(client, user, restaurant):
-    client = auth_client(client, get_jwt_for_user(user))
+def test_create_without_title(client, restaurant):
+    client = auth_client(client, get_jwt_for_user(restaurant))
     payload = deepcopy(MENU_REQUEST_BODY)
     payload.pop("title")
 
@@ -187,8 +171,8 @@ def test_create_without_title(client, user, restaurant):
     assert resp.status_code == HTTP_201_CREATED
 
 
-def test_create_without_notes(client, user, restaurant):
-    client = auth_client(client, get_jwt_for_user(user))
+def test_create_without_notes(client, restaurant):
+    client = auth_client(client, get_jwt_for_user(restaurant))
     payload = deepcopy(MENU_REQUEST_BODY)
     payload.pop("notes")
 
@@ -198,8 +182,8 @@ def test_create_without_notes(client, user, restaurant):
     assert resp.status_code == HTTP_201_CREATED
 
 
-def test_create_without_launch_date(client, user, restaurant):
-    client = auth_client(client, get_jwt_for_user(user))
+def test_create_without_launch_date(client, restaurant):
+    client = auth_client(client, get_jwt_for_user(restaurant))
     payload = deepcopy(MENU_REQUEST_BODY)
     payload.pop("launch_date")
 
