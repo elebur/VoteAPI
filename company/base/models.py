@@ -1,3 +1,4 @@
+from ast import mod
 from typing import TYPE_CHECKING  # noqa: D100
 
 from django.contrib.auth.models import User
@@ -61,6 +62,7 @@ class Restaurant(BaseReprAndStr, models.Model):
     Restaurants are required for creating menus.
     """
 
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField()
     date_joined = models.DateTimeField(auto_now_add=True)
 

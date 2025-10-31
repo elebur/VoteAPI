@@ -54,12 +54,20 @@ def employee(db):
 
 @pytest.fixture
 def restaurant(db):
-    return Restaurant.objects.create(name="Restaurant")
+    user = User.objects.create(
+        username="restaurant_user", password="password", email="restaurant@name.com",
+    )
+    return Restaurant.objects.create(name="Restaurant", user=user)
 
 
 @pytest.fixture
 def menu(db):
-    restaurant = Restaurant.objects.create(name="Restaurant For Menu Fixture")
+    r_user = User.objects.create(
+        username="menu_restaurant_user", password="password", email="restaurant@name.com",
+    )
+    restaurant = Restaurant.objects.create(
+        name="Restaurant For Menu Fixture", user=r_user,
+    )
     menu: Menu = Menu.objects.create(
         restaurant=restaurant, launch_date=timezone.now().date(),
     )
@@ -72,10 +80,17 @@ def menu(db):
 
 @pytest.fixture
 def multiple_menus(db):
-    r1 = Restaurant.objects.create(name="Restaurant#1")
-    r2 = Restaurant.objects.create(name="Restaurant#2")
-    r3 = Restaurant.objects.create(name="Restaurant#3")
-    r4 = Restaurant.objects.create(name="Restaurant#4")
+    u1 = User.objects.create(username="rest1", password="pass")
+    r1 = Restaurant.objects.create(name="Restaurant#1", user=u1)
+
+    u2 = User.objects.create(username="rest2", password="pass")
+    r2 = Restaurant.objects.create(name="Restaurant#2", user=u2)
+
+    u3 = User.objects.create(username="rest3", password="pass")
+    r3 = Restaurant.objects.create(name="Restaurant#3", user=u3)
+
+    u4 = User.objects.create(username="rest4", password="pass")
+    r4 = Restaurant.objects.create(name="Restaurant#4", user=u4)
 
     today = timezone.now().date()
     menu1 = Menu.objects.create(restaurant=r1, launch_date=today)

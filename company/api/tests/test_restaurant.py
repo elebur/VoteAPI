@@ -19,6 +19,9 @@ from api.tests.tools import (
 
 PAYLOAD = MappingProxyType({
     "name": "RESTaurant's name",
+    "username": "restaurant_user",
+    "password": "password",
+    "email": "restaurant@mail.com",
 })
 
 ENDPOINT = "/api/restaurant/"
@@ -29,8 +32,8 @@ def test_create_by_admin(admin, client):
 
     resp = client.post(ENDPOINT, PAYLOAD)
 
-    assert resp.status_code == HTTP_201_CREATED
     assert resp.text == '{"restaurant_id":1}'
+    assert resp.status_code == HTTP_201_CREATED
 
 
 def test_create_by_user(user, client):
@@ -54,11 +57,12 @@ def test_create_with_duplicated_restaurant_name(client, admin):
     client = auth_client(client, get_jwt_for_user(admin))
 
     client.post(ENDPOINT, PAYLOAD)
-    resp_duplicate = client.post(ENDPOINT, PAYLOAD)
+    payload_copy = PAYLOAD.copy()
+    payload_copy["username"] = "new_username"
+    resp_duplicate = client.post(ENDPOINT, payload_copy)
 
-
-    assert resp_duplicate.status_code == HTTP_201_CREATED
     assert resp_duplicate.text == '{"restaurant_id":2}'
+    assert resp_duplicate.status_code == HTTP_201_CREATED
 
 
 def test_without_name_in_body(client, admin):

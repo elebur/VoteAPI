@@ -48,10 +48,27 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True)
+    email = serializers.EmailField(write_only=True)
+
     class Meta:
         model = models.Restaurant
-        fields = "__all__"
+        exclude = ("user",)
 
+    def create(self, validated_data: dict) -> models.Restaurant:
+        username = validated_data["username"]
+
+        if User.objects.filter(username=username).exists():
+            err_msg = {"details": f"The username '{username}' is already in use"}
+            raise ValidationError(detail=err_msg)
+
+        user = User.objects.create_user(
+            username=username,
+            password=validated_data["password"],
+            email=validated_data["email"],
+        )
+        return models.Restaurant.objects.create(user=user, name=validated_data["name"])
 
 class MenuItemSerializer(serializers.ModelSerializer):
     class Meta:
