@@ -43,8 +43,8 @@ MULTIPLE_MENUS_STRUCTURE = [
         'items': [
             {'id': 1, 'title': 'Item#1_1', 'description': 'Descr#1_1'},
             {'id': 2, 'title': 'Item#1_2', 'description': 'Descr#1_2'}],
-        'title': None,
-        'notes': None,
+        'title': "",
+        'notes': "",
         'launch_date': '2025-10-16',
         'date_created': '2025-10-16T19:00:00Z',
         'last_modified': '2025-10-16T19:00:00Z',
@@ -55,8 +55,8 @@ MULTIPLE_MENUS_STRUCTURE = [
         'items': [
             {'id': 4, 'title': 'Item#2_1', 'description': 'Descr#3_1'},
             {'id': 5, 'title': 'Item#3_2', 'description': 'Descr#3_2'}],
-        'title': None,
-        'notes': None,
+        'title': "",
+        'notes': "",
         'launch_date': '2025-10-16',
         'date_created': '2025-10-16T19:00:00Z',
         'last_modified': '2025-10-16T19:00:00Z',
@@ -68,8 +68,8 @@ MULTIPLE_MENUS_STRUCTURE = [
             {'id': 6, 'title': 'Item#4_1', 'description': 'Descr#4_1'},
             {'id': 7, 'title': 'Item#4_2', 'description': 'Descr#4_2'},
             {'id': 8, 'title': 'Item#4_3', 'description': 'Descr#4_3'}],
-        'title': None,
-        'notes': None,
+        'title': "",
+        'notes': "",
         'launch_date': '2025-10-16',
         'date_created': '2025-10-16T19:00:00Z',
         'last_modified': '2025-10-16T19:00:00Z',
@@ -201,7 +201,7 @@ def test_retrieve_by_id_by_user(client, user, restaurant, menu):
     client = auth_client(client, get_jwt_for_user(user))
     resp = client.get(ENDPOINT + f"{menu.id}/")
 
-    assert resp.text == ('{"id":1,"items":[{"id":1,"title":"Menu item","description":"Description"}],"title":null,"notes":null,"launch_date":"2025-10-16","date_created":"2025-10-16T11:00:00Z","last_modified":"2025-10-16T11:00:00Z","restaurant":2}')
+    assert resp.text == ('{"id":1,"items":[{"id":1,"title":"Menu item","description":"Description"}],"title":"","notes":"","launch_date":"2025-10-16","date_created":"2025-10-16T11:00:00Z","last_modified":"2025-10-16T11:00:00Z","restaurant":2}')
     assert resp.status_code == 200
 
 
@@ -210,7 +210,7 @@ def test_retrieve_by_id_by_admin(client, admin, restaurant, menu):
     client = auth_client(client, get_jwt_for_user(admin))
     resp = client.get(ENDPOINT + f"{menu.id}/")
 
-    assert resp.text == '{"id":1,"items":[{"id":1,"title":"Menu item","description":"Description"}],"title":null,"notes":null,"launch_date":"2025-10-16","date_created":"2025-10-16T11:00:00Z","last_modified":"2025-10-16T11:00:00Z","restaurant":2}'
+    assert resp.text == '{"id":1,"items":[{"id":1,"title":"Menu item","description":"Description"}],"title":"","notes":"","launch_date":"2025-10-16","date_created":"2025-10-16T11:00:00Z","last_modified":"2025-10-16T11:00:00Z","restaurant":2}'
     assert resp.status_code == 200
 
 
@@ -218,7 +218,7 @@ def test_retrieve_by_id_by_admin(client, admin, restaurant, menu):
 def test_retrieve_by_id_by_anonymous(client, restaurant, menu):
     resp = client.get(ENDPOINT + f"{menu.id}/")
 
-    assert resp.text == '{"id":1,"items":[{"id":1,"title":"Menu item","description":"Description"}],"title":null,"notes":null,"launch_date":"2025-10-16","date_created":"2025-10-16T11:00:00Z","last_modified":"2025-10-16T11:00:00Z","restaurant":2}'
+    assert resp.text == '{"id":1,"items":[{"id":1,"title":"Menu item","description":"Description"}],"title":"","notes":"","launch_date":"2025-10-16","date_created":"2025-10-16T11:00:00Z","last_modified":"2025-10-16T11:00:00Z","restaurant":2}'
     assert resp.status_code == 200
 
 
