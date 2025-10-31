@@ -86,7 +86,10 @@ The body of the request (all fields are required):
 The body of the request (all fields are required):
 ```json
 {
-     "name": "Name of the restaurant"
+    "name": "Restaurant's name",
+    "username": "username",
+    "password": "Pas$w0r4",
+    "email": "restaurant@mail.com"
 }
 ```
 ---
@@ -97,12 +100,12 @@ The body of the request (all fields are required):
 
 ## Menu
 `POST`: `/api/menu/` - create new menu.
+> Only Restaurants can create menus!
 
 The body of the request:
 `title` and `notes` are optional
 ```json
 {
-    "restaurant": 1,
     "title": "Menu title",
     "notes": "Note about the menu",
     "launch_date": "2025-10-25",
