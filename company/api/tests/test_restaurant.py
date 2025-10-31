@@ -65,6 +65,18 @@ def test_create_with_duplicated_restaurant_name(client, admin):
     assert resp_duplicate.status_code == HTTP_201_CREATED
 
 
+def test_create_with_duplicated_username(client, admin):
+    client = auth_client(client, get_jwt_for_user(admin))
+
+    client.post(ENDPOINT, PAYLOAD)
+    resp_duplicate = client.post(ENDPOINT, PAYLOAD)
+
+    assert resp_duplicate.text == ('{"details":"The username '
+                                   '\'restaurant_user\' is already in use"}')
+    assert resp_duplicate.status_code == HTTP_400_BAD_REQUEST
+
+
+
 def test_without_name_in_body(client, admin):
     client = auth_client(client, get_jwt_for_user(admin))
 
