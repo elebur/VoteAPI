@@ -62,7 +62,7 @@ class TestMenuSerializerWithDuplicatedItems:
         data["launch_date"] = "2026-1-1"
         data["items"] = list(items)
         ser_duplicate = MenuSerializer(data=data)
-        ser_duplicate.is_valid()
+        ser_duplicate.is_valid(raise_exception=True)
         ser_duplicate.create(ser_duplicate.validated_data)
 
         # After the second call with the same items we must
