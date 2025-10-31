@@ -6,7 +6,7 @@ select = ["ALL"]
 [lint.isort]
 # For treating the 'base' package from my app as first-party package
 # for the proper import sorting.
-known-first-party = ["base"]
+known-first-party = ["base", "api"]
 
 [lint.per-file-ignores]
 # Here you can find what these codes are stand for
