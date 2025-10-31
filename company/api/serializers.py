@@ -67,7 +67,7 @@ class MenuSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data: dict) -> models.Menu:
-        menu_items_data = validated_data.pop("items")
+        menu_items_data = validated_data.pop("items", None)
         if not menu_items_data:
             err_msg = {
                 "details": ("'items' is the required parameter. "
