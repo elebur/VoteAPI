@@ -25,9 +25,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data: dict) -> models.Employee:
-        u = User.objects.filter(username=validated_data["username"]).first()
-
-        if u:
+        if User.objects.filter(username=validated_data["username"]).exists():
             err_msg = {
                 "details": (
                     f"The username '{validated_data['username']}' is already in use"
