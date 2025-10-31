@@ -102,7 +102,7 @@ def test_vote_multiple_times(client, menu, employee):
     assert resp_init.text == '{"vote_id":1,"action":"liked"}'
     assert resp_init.status_code == 200
 
-    assert resp_duplicate.text == '{"details":"You\'ve already liked this menu \'None\'."}'
+    assert resp_duplicate.text == '{"details":"You\'ve already liked this menu \'\'."}'
     assert resp_duplicate.status_code == 400
 
 
@@ -119,7 +119,7 @@ def test_vote_set_like_then_dislike_for_same_menu(client, employee, menu):
     assert resp_init.text == '{"vote_id":1,"action":"liked"}'
     assert resp_init.status_code == 200
 
-    assert resp_duplicate.text == '{"details":"You\'ve already liked this menu \'None\'."}'
+    assert resp_duplicate.text == '{"details":"You\'ve already liked this menu \'\'."}'
     assert resp_duplicate.status_code == 400
 
 
@@ -135,7 +135,7 @@ def test_vote_set_dislike_then_like_for_same_menu(client, employee, menu):
     assert resp_init.text == '{"vote_id":1,"action":"disliked"}'
     assert resp_init.status_code == 200
 
-    assert resp_duplicate.text == '{"details":"You\'ve already disliked this menu \'None\'."}'
+    assert resp_duplicate.text == '{"details":"You\'ve already disliked this menu \'\'."}'
     assert resp_duplicate.status_code == 400
 
 
